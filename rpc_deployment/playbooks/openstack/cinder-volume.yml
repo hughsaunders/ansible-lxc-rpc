@@ -16,12 +16,7 @@
 - hosts: cinder_volume
   user: root
   roles:
-    - common
-    - common_sudoers
     - container_extra_setup
-    - container_common
-    - openstack_common
-    - openstack_openrc
     - cinder_common
     - cinder_volume
     - cinder_device_add
@@ -31,5 +26,7 @@
   vars_files:
     - vars/config_vars/container_config_cinder_volume.yml
     - vars/openstack_service_vars/cinder_volume.yml
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/cinder.yml
   handlers:
     - include: handlers/services.yml

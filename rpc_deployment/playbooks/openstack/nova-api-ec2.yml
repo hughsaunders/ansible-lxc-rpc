@@ -13,28 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- hosts: nova_api_ec2[0]
-  user: root
-  roles:
-    - keystone_add_service
-  vars_files:
-    - vars/openstack_service_vars/nova_api_ec2_endpoint.yml
-
-- hosts: nova_api_ec2[0]
-  user: root
-  roles:
-    - keystone_add_service
-  vars_files:
-    - vars/openstack_service_vars/nova_api_s3_endpoint.yml
-
 - hosts: nova_api_ec2
   user: root
   roles:
-    - common
-    - common_sudoers
-    - container_common
-    - openstack_common
-    - openstack_openrc
     - nova_common
     - galera_client_cnf
     - init_script

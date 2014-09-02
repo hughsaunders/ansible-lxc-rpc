@@ -21,11 +21,14 @@
   vars_files:
     - vars/config_vars/container_config_logstash.yml
 
-
 - hosts: logstash
   user: root
   roles:
     - common
     - container_common
-    - logging_common
+    - package_system_install
+    - package_source_install
     - logstash
+  vars_files:
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/logstash.yml

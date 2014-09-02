@@ -13,6 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: lxc_install.yml
 - include: lxc_host_setup.yml
 - include: lxc_container_cache.yml

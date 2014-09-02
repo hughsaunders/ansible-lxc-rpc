@@ -1,0 +1,17 @@
+---
+- name: Check for back base repo
+  command: ls /etc/apt/sources.list.bak
+  register: check_repo
+  changed_when: false
+  failed_when: false
+
+- name: Backup base repo
+  command: cp /etc/apt/sources.list /etc/apt/sources.list.bak
+  register: backup_repo
+  when: check_repo.rc != 0
+  changed_when: backup_repo.rc == 0
+
+- name: Blank out base repo
+  file:
+    path: "/etc/apt/sources.list"
+    state: "absent"

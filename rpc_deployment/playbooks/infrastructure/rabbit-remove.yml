@@ -17,3 +17,6 @@
   user: root
   roles:
     - rabbit_remove
+  vars_files:
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/rabbitmq.yml

@@ -19,7 +19,6 @@
 ## Service Name
 service_name: keystone
 
-
 ## Service ports
 service_port: 5000
 admin_port: 35357
@@ -53,22 +52,6 @@ system_user: keystone
 system_group: keystone
 
 
-## Git Source
-git_repo: https://git.openstack.org/openstack/keystone
-git_fallback_repo: https://github.com/openstack/keystone
-git_etc_example: etc/
-git_install_branch: stable/icehouse
-
-# Common PIP Packages
-service_pip_dependencies:
-  - repoze.lru
-  - pbr
-  - MySQL-python
-  - pycrypto
-  - python-memcached
-  - python-keystoneclient
-
-
 ## Enable SSL
 keystone_ssl: false
 
@@ -84,16 +67,3 @@ container_directories:
   - /var/lib/keystone
   - /var/log/keystone
   - /var/www/cgi-bin/keystone
-
-container_packages:
-  - libsasl2-dev
-  - debhelper
-  - dh-apparmor
-  - docutils-common
-  - libjs-sphinxdoc
-  - libjs-underscore 
-  - libxslt1.1 
-  - libldap2-dev
-  - apache2
-  - apache2-utils
-  - libapache2-mod-wsgi

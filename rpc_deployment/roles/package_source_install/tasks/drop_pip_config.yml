@@ -1,0 +1,60 @@
+---
+# Copyright 2014, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Create pip config directory
+  file:
+    path: "{{ item }}"
+    state: "directory"
+    group: "root"
+    owner: "root"
+  with_items:
+    - "/root/.pip"
+    - "/root/.pip/base"
+    - "/root/.pip/links.d"
+
+- name: Drop pip config file(s)
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "root"
+    group: "root"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "pip-link-build.py", dest: "/root/.pip/pip-link-build.py", mode: "0755" }
+    - { src: "base/global.conf.j2", dest: "/root/.pip/base/global.conf", mode: "0644" }
+
+- name: Drop repo pip link
+  template:
+    src: "links/rpc_repo_path.link"
+    dest: "/root/.pip/links.d/{{ repo_package_name }}.link"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when: repo_package_name is defined and repo_path is defined
+  register: pip_repo_link
+
+- name: Drop release pip link
+  template:
+    src: "links/rpc_release.link"
+    dest: "/root/.pip/links.d/rpc_release.link"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  register: pip_link
+
+- name: Execute pip config builder
+  command: /root/.pip/pip-link-build.py
+  changed_when: false
+  when: pip_link|changed or pip_repo_link|changed

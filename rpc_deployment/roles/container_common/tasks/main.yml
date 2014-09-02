@@ -16,6 +16,4 @@
 - include: container_user_create.yml
   when: system_user is defined and system_user not in excluded_user_create
 - include: container_os_setup.yml
-- include: container_repos.yml
-- include: container_packages.yml
 - include: add_interfaces.yml

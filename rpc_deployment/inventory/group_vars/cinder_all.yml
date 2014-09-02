@@ -58,22 +58,6 @@ service_names:
   - cinder-scheduler
   - cinder-volume
 
-## Git Source
-git_repo: https://git.openstack.org/openstack/cinder
-git_fallback_repo: https://github.com/openstack/cinder
-git_etc_example: etc/cinder/
-git_install_branch: stable/icehouse
-
-service_pip_dependencies:
-  - pywbem
-  - ecdsa
-  - MySQL-python
-  - python-memcached
-  - pycrypto
-  - python-cinderclient
-  - python-keystoneclient
-  - keystonemiddleware
-
 container_directories:
   - /var/log/cinder
   - /var/lib/cinder
@@ -83,10 +67,3 @@ container_directories:
   - /var/cache/cinder
   - /var/lock/cinder
   - /var/run/cinder
-
-container_packages:
-  - libpq-dev
-  - libkmod-dev
-  - libkmod2
-  - dmeventd
-

@@ -16,15 +16,12 @@
 - hosts: cinder_scheduler
   user: root
   roles:
-    - common
-    - common_sudoers
-    - container_common
-    - openstack_common
-    - openstack_openrc
     - cinder_common
     - galera_client_cnf
     - init_script
   vars_files:
     - vars/openstack_service_vars/cinder_scheduler.yml
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/cinder.yml
   handlers:
     - include: handlers/services.yml

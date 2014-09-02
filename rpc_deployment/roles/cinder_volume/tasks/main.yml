@@ -18,4 +18,5 @@
     dest: /etc/tgt/targets.conf
     line: "include /var/lib/cinder/volumes/*"
     state: present
+    create: yes
   notify: Ensure tgt service restarted

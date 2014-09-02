@@ -18,7 +18,10 @@
   user: root
   roles:
     - common
+    - package_system_install
     - haproxy_common
     - haproxy_service
   vars_files:
     - vars/config_vars/haproxy_config.yml
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/haproxy.yml

@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- include: cinder-common.yml
 - include: cinder-api.yml
 - include: cinder-scheduler.yml
 - include: cinder-volume.yml

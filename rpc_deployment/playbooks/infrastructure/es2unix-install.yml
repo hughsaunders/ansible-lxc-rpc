@@ -17,5 +17,10 @@
 - hosts: utility_all
   user: root
   roles:
-    - logging_common
+    - container_common
+    - package_system_install
+    - package_source_install
     - utility_logging
+  vars_files:
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/utility.yml

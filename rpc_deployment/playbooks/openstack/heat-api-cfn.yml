@@ -16,22 +16,10 @@
 - hosts: heat_api_cfn
   user: root
   roles:
-    - common
-    - common_sudoers
-    - container_common
     - heat_common
-    - openstack_common
-    - openstack_openrc
     - galera_client_cnf
     - init_script
   vars_files:
     - vars/openstack_service_vars/heat_api_cfn.yml
   handlers:
     - include: handlers/services.yml
-
-- hosts: heat_api_cfn[0]
-  user: root
-  roles:
-    - keystone_add_service
-  vars_files:
-    - vars/openstack_service_vars/heat_api_cfn_endpoint.yml

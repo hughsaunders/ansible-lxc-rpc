@@ -13,18 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install HAPRoxy Packages
-  apt:
-    pkg: "{{ item }}"
-    state: present
-    update_cache: yes
-    cache_valid_time: 600
-  ignore_errors: yes
-  with_items:
-    - haproxy
-    - hatop
-    - vim-haproxy
-
 - name: Replace haproxy DEFAULT file
   copy:
     src: haproxy.default

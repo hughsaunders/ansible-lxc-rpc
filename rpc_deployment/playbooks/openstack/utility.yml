@@ -18,11 +18,15 @@
   roles:
     - common
     - container_common
+    - package_system_install
+    - package_source_install
     - utility_common
     - openstack_openrc
     - galera_client_cnf
   vars_files:
     - vars/config_vars/utility_config.yml
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/utility.yml
 
 - hosts: all_containers:!utility_all
   user: root

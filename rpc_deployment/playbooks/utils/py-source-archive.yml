@@ -1,0 +1,67 @@
+---
+# Copyright 2014, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# For a given service create a set of wheels to be used with the service.
+- hosts: utility_all[0]
+  user: root
+  gather_facts: false
+  pre_tasks:
+    - name: Move pip config if found
+      command: mv /root/.pip/pip.conf /root/.pip/pip.conf.moved
+      register: move_pip_cfg
+      failed_when: false
+      changed_when: move_pip_cfg.rc == 0
+    - name: Install pip requirements
+      pip:
+        name: "{{ item }}"
+      with_items:
+        - wheel
+        - turbolift
+    - name: Ensure no old wheel temp directories
+      file:
+        path: "{{ temp_dir }}"
+        state: absent
+    - name: Create working directory
+      file:
+        path: "{{ temp_dir }}/wheels"
+        state: directory
+  post_tasks:
+    - name: Move pip config back if found
+      command: mv /root/.pip/pip.conf.moved /root/.pip/pip.conf 
+      register: move_pip_cfg
+      failed_when: false
+      changed_when: move_pip_cfg.rc == 0
+    - name: Ensure no old wheel temp directories
+      file:
+        path: "{{ temp_dir }}"
+        state: absent
+  roles:
+    - package_source_archive
+  vars_files: 
+    - "vars/repo_packages/{{ repo_package_var }}"
+  vars:
+    swift_user: "{{ python_repo_swift_user }}"
+    swift_user_password: "{{ python_repo_swift_user_password }}"
+    swift_user_tenant: "{{ python_repo_swift_user_tenant }}"
+    swift_authurl: "{{ python_repo_swift_authurl }}"
+    swift_region: "{{ python_repo_swift_region }}"
+    swift_container: "{{ frozen_repo|default('rcb-frozen') }}"
+
+    release_version: "{{ rpc_release }}"
+    temp_dir: "/tmp/wheels_{{ pip_wheel_name|default(repo_package_name) }}"
+    build_git_dir: "{{ temp_dir }}/{{ repo_path|default(repo_package_name) }}"
+    local_creds_file: "{{ swift_archive_store.creds_file }}"
+    remote_creds_file: "/root/{{ swift_archive_store.creds_file|basename }}"
+    section: "{{ swift_archive_store.section }}"

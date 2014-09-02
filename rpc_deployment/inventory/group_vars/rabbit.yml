@@ -15,12 +15,6 @@
 
 service_name: rabbitmq
 
-rabbitmq_key:
-  - "http://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
-
-rabbit_repos:
-  - { repo: "deb http://www.rabbitmq.com/debian/ testing main", state: "present" }
-
 container_lvm_fstype: ext4
 container_lvm_fssize: 5GB
 container_config_options:

@@ -17,16 +17,12 @@
 - hosts: glance_registry
   user: root
   roles:
-    - common
-    - common_sudoers
-    - container_common
     - glance_common
-    - openstack_common
-    - openstack_openrc
     - galera_client_cnf
     - init_script
   vars_files:
-    - vars/config_vars/glance_config.yml
     - vars/openstack_service_vars/glance_registry.yml
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/glance.yml
   handlers:
     - include: handlers/services.yml

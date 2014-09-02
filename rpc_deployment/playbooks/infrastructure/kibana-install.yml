@@ -19,4 +19,9 @@
   roles:
     - common
     - container_common
+    - package_system_install
+    - package_source_install
     - kibana
+  vars_files:
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/kibana.yml

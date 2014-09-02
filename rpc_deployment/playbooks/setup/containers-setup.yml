@@ -19,6 +19,7 @@
     - container_setup
   vars_files:
     - vars/config_vars/container_interfaces.yml
+    - vars/repo_packages/all_common.yml
   vars:
     container_groups: "{{ groups[hostvars[inventory_hostname]['container_types']] }}"
     required_container_config_options:

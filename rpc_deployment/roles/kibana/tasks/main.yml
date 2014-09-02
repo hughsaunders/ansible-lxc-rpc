@@ -14,24 +14,26 @@
 # limitations under the License.
 
 - name: Download Kibana
-  get_url: >
-    url={{ kibana_url }}
-    dest=/tmp/kibana.tar.gz
-    mode=0644
+  get_url:
+    url: "{{ kibana_url }}"
+    dest: "/tmp/kibana.tar.gz"
+    mode: "0755"
+    validate_certs: "no"
+    sha256sum: "{{ kibana_sha256sum }}"
 
 - name: Extract Kibana
-  unarchive: >
-    copy=no
-    src=/tmp/kibana.tar.gz
-    dest=/opt
+  unarchive:
+    copy: "no"
+    src: "/tmp/kibana.tar.gz"
+    dest: "/opt"
 
 - name: Link Kibana Directory
-  file: >
-    state=link
-    src=/opt/kibana-3.1.0
-    dest={{ kibana_root }}
-    owner={{ system_user }}
-    group={{ system_group }}
+  file:
+    state: "link"
+    src: "/opt/kibana-3.1.0"
+    dest: "{{ kibana_root }}"
+    owner: "{{ system_user }}"
+    group: "{{ system_group }}"
 
 - name: create self-signed SSL cert
   command: >
@@ -57,67 +59,58 @@
   command: a2enmod proxy_http
 
 - name: Kibana Setup
-  template: >
-    src={{ item }}
-    dest="/etc/apache2/sites-available/{{ item }}"
-    owner={{ system_user }}
-    group={{ system_group }}
-  register: results
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
   with_items:
-    - 000-kibana.conf
-
-- name: Fix Apache2 Paths
-  template: >
-    src={{ item }}
-    dest="/etc/apache2/{{ item }}"
-    owner=root
-    group=root
-  with_items:
-    - apache2.conf
-
-- name: Drop Apache2 Ports File
-  template: >
-    src={{ item }}
-    dest="/etc/apache2/{{ item }}"
-    owner=root
-    group=root
-  with_items:
-    - ports.conf
-
-- name: Kibana Config
-  template: >
-    src={{ item }}
-    dest="{{ kibana_root }}/{{ item }}"
-    owner={{ system_user }}
-    group={{ system_group }}
-  register: results
-  with_items:
-    - config.js
+    - src: "000-kibana.conf"
+      dest: "/etc/apache2/sites-available/000-kibana.conf"
+      owner: "{{ system_user }}"
+      group: "{{ system_group }}"
+    - src: "apache2.conf"
+      dest: "/etc/apache2/apache2.conf"
+      owner: "root"
+      group: "root"
+    - src: "ports.conf"
+      dest: "/etc/apache2/ports.conf"
+      owner: "root"
+      group: "root"
+    - src: "Next-Gen-RPC.json"
+      dest: "/opt/kibana/app/dashboards/Next-Gen-RPC.json"
+      owner: "root"
+      group: "root"
+    - src: "config.js"
+      dest: "{{ kibana_root }}/config.js"
+      owner: "{{ system_user }}"
+      group: "{{ system_group }}"
 
 - name: Link Kibana Site
-  file: >
-    state=link
-    src=/etc/apache2/sites-available/000-kibana.conf
-    dest=/etc/apache2/sites-enabled/000-kibana.conf
-    owner={{ system_user }}
-    group={{ system_group }}
+  file:
+    state: "link"
+    src: "/etc/apache2/sites-available/000-kibana.conf"
+    dest: "/etc/apache2/sites-enabled/000-kibana.conf"
+    owner: "{{ system_user }}"
+    group: "{{ system_group }}"
 
 - name: Remove Apache Default Site
-  file: >
-    state=absent
-    path=/etc/apache2/sites-enabled/000-default.conf
+  file:
+    state: "absent"
+    path: "/etc/apache2/sites-enabled/000-default.conf"
 
 - name: Create kibana http_auth user
-  htpasswd: path=/etc/apache2/users name=kibana password={{ kibana_password }} owner=root group=www-data mode=0640 create=yes state=present
-
-- name: Install Next Gen RPC Dashboard
-  template: >
-    src={{ item }}
-    dest="/opt/kibana/app/dashboards/{{ item }}"
-    owner=root
-    group=root
-  with_items:
-    - Next-Gen-RPC.json
+  htpasswd:
+    path: "/etc/apache2/users"
+    name: "kibana"
+    password: "{{ kibana_password }}"
+    owner: "root"
+    group: "www-data"
+    mode: "0640"
+    create: "yes"
+    state: "present"
 
 - name: Restart Apache
-  service: name=apache2 state=restarted
+  service:
+    name: "apache2"
+    state: "restarted"

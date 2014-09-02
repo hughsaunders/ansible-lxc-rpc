@@ -19,6 +19,10 @@
     - container_extra_setup
     - common
     - container_common
+    - package_system_install
+    - package_source_install
     - memcached
   vars_files:
     - vars/config_vars/container_config_memcached.yml
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/memcached.yml

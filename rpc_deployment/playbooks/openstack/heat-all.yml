@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- include: heat-common.yml
 - include: heat-api.yml
 - include: heat-api-cfn.yml
 - include: heat-api-cloudwatch.yml

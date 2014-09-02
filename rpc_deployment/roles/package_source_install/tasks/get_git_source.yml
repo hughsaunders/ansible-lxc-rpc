@@ -1,0 +1,65 @@
+---
+# Copyright 2014, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Get package from git
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ git_dest }}"
+    version: "{{ git_install_branch }}"
+  register: git_clone
+  when: git_repo is defined and git_dest is defined
+  ignore_errors: yes
+  until: git_clone|success
+  retries: 5
+
+- name: Get package from fallback git repo
+  git:
+    repo: "{{ git_fallback_repo }}"
+    dest: "{{ git_dest }}"
+    version: "{{ git_install_branch }}"
+  register: git_fallback_clone
+  when: git_clone|failed and git_fallback_repo is defined and git_dest is defined
+  until: git_fallback_clone|success
+  retries: 5
+
+- name: Check for [ requirements.txt ] file
+  command: ls {{ git_dest }}/requirements.txt
+  register: check_requirements
+  when: git_dest is defined
+  failed_when: false
+  changed_when: check_requirements.rc != 0
+
+- include: pip_install_requirements.yml
+  when: git_dest is defined and check_requirements.rc == 0
+  vars:
+    defined_pip_requirements_file: "{{ git_dest }}/requirements.txt"
+
+- name: Check for [ setup.py ] file
+  command: ls {{ git_dest }}/setup.py
+  register: check_setup
+  when: git_dest is defined
+  failed_when: false
+  changed_when: check_setup.rc != 0
+
+- include: pip_install.yml
+  when: git_dest is defined and service_name is defined and check_setup.rc == 0
+  vars:
+    defined_pip_packages:
+      - "{{ git_dest }}"
+
+- include: pip_install_repo_plugins.yml
+  when: git_repo_plugins is defined
+  vars:
+    defined_pip_packages: "{{ git_repo_plugins }}"

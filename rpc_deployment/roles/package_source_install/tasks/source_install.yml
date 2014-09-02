@@ -1,0 +1,42 @@
+---
+# Copyright 2014, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Install defined pip wheel
+  pip:
+    name: "{{ pip_wheel_name }}"
+    extra_args: "{{ pip_install_options|default('') }}"
+  when: pip_wheel_name is defined
+  ignore_errors: yes
+  register: pip_install
+  until: pip_install|success
+  retries: 5
+  delay: 10
+
+
+- name: Install pip plugins
+  pip:
+    name: "{{ item.package }}"
+    extra_args: "{{ pip_install_options|default('') }}"
+  with_items: git_repo_plugins
+  when: git_repo_plugins is defined and pip_install|success
+  ignore_errors: yes
+  register: pip_plugin_install
+  until: pip_plugin_install|success
+  retries: 5
+  delay: 10
+
+
+- include: get_git_source.yml
+  when: pip_install|skipped or pip_install|failed

@@ -84,6 +84,54 @@
     - [ "/monitoring", "/etc/network/interfaces.d" ]
     - container_groups
 
+- name: Backup base repositories
+  lxc: >
+    name={{ hostvars[item]['container_name'] }}
+    command=attach
+    container_command="if [ ! -f /etc/apt/sources.list.bak ]; then cp /etc/apt/sources.list /etc/apt/sources.list.bak; fi"
+  with_items: container_groups
+
+- name: Blank out base repositories
+  lxc: >
+    name={{ hostvars[item]['container_name'] }}
+    command=attach
+    container_command="echo "" > /etc/apt/sources.list"
+  with_items: container_groups
+
+- name: Drop empty base repo file(s)
+  lxc: >
+    name={{ hostvars[item.1]['container_name'] }}
+    command=attach
+    container_command="echo "" > /etc/apt/sources.list.d/{{ item.0.name }}.list"
+  with_nested:
+    - apt_common_repos
+    - container_groups
+
+- name: Add rpc base repositories
+  lxc: >
+    name={{ hostvars[item.1]['container_name'] }}
+    command=attach
+    container_command="echo -e '{{ item.0.repo }}' >> /etc/apt/sources.list.d/{{ item.0.name }}.list"
+  with_nested:
+    - apt_common_repos
+    - container_groups
+
+- name: Add rpc base keys
+  lxc: >
+    name={{ hostvars[item.1]['container_name'] }}
+    command=attach
+    container_command="curl {{ item.0.url }} | apt-key add -"
+  with_nested:
+    - apt_container_keys
+    - container_groups
+
+- name: Update apt repositories
+  lxc: >
+    name={{ hostvars[item]['container_name'] }}
+    command=attach
+    container_command="apt-get update"
+  with_items: container_groups
+
 - name: Create Required local log directories
   file: >
     path=/openstack/log/{{ hostvars[item]['container_name'] }}

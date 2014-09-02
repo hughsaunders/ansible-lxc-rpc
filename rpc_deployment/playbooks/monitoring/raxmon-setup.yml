@@ -17,10 +17,15 @@
   user: root
   roles:
     - galera_client_cnf
+    - package_system_install
+    - package_source_install
     - raxmon_cli
     - raxmon_agent_install
   vars:
     entity_name: "{{ inventory_hostname }}"
+  vars_files:
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/raxmon.yml
 
 - hosts: keystone[0]
   user: root

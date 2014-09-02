@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- include: neutron-common.yml
 - include: neutron-server.yml
 - include: neutron-metadata-agent.yml
 - include: neutron-dhcp-agent.yml

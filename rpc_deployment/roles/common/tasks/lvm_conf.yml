@@ -18,6 +18,7 @@
     /sbin/pvdisplay | awk '/PV\ Name/ {print $3}' | sed 's/\/dev\///g'
   register: lvm_devices
   failed_when: false
+  changed_when: lvm_devices.rc != 0
 
 - name: Ensure "/etc/lvm" directory
   file:

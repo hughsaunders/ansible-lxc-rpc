@@ -14,28 +14,33 @@
 # limitations under the License.
 
 - name: Deploy rsyslog config generator
-  template: >
-    src={{ item }}
-    dest=/opt/{{ item }}
-    owner=root
-    group=root
-    mode=0755
+  template:
+    src: "{{ item }}"
+    dest: "/opt/{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
   with_items:
     - genlog.py
 
 - name: Stop rsyslog
-  service: name=rsyslog state=stopped pattern=rsyslog
-
-- name: Generate Config Files
-  shell: >
-    /opt/genlog.py > /etc/rsyslog.d/51-openstack.conf
+  service: 
+    name: "rsyslog"
+    state: "stopped"
+    pattern: "rsyslog"
 
 - name: Ensure ownership on /var/spool/rsyslog
-  file: >
-    path=/var/spool/rsyslog
-    state=directory
-    owner=syslog
-    group=syslog
+  file:
+    path: "/var/spool/rsyslog"
+    owner: "syslog"
+    group: "syslog"
+    state: "directory"
+
+- name: Generate Config Files
+  shell: /opt/genlog.py > /etc/rsyslog.d/51-openstack.conf
 
 - name: Start rsyslog
-  service: name=rsyslog state=restarted pattern=rsyslog
+  service:
+    name: "rsyslog"
+    state: "restarted"
+    pattern: "rsyslog"

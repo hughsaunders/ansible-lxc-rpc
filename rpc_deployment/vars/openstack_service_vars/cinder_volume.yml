@@ -17,7 +17,3 @@
 # These don't have to be explicitly imported by vars_files: they are autopopulated.
 
 program_name: cinder-volume
-apt_common_packages:
-  - tgt
-  - parted
-  - qemu-utils

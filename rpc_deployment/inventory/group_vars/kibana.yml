@@ -22,13 +22,7 @@ verbose: True
 container_lvm_fstype: ext4
 container_lvm_fssize: 5GB
 
-kibana_url: https://download.elasticsearch.org/kibana/kibana/kibana-3.1.0.tar.gz
-
 kibana_root: /opt/kibana
-
-container_packages:
-  - apache2
-  - python-passlib
 
 system_user: www-user
 system_group: www-data

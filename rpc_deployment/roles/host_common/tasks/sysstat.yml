@@ -13,21 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install sysstat
-  apt:
-    pkg: sysstat
-    state: present
-    update_cache: yes
-    cache_valid_time: 600
-
 - name: Enable sysstat
-  template: >
-    src=sysstat
-    dest=/etc/default/sysstat
+  template:
+    src: "sysstat"
+    dest: "/etc/default/sysstat"
   notify: Restart sysstat
 
 - name: Enable sysstat cron
-  template: >
-    src=sysstat.cron
-    dest=/etc/cron.d/sysstat
+  template:
+    src: "sysstat.cron"
+    dest: "/etc/cron.d/sysstat"
   notify: Restart sysstat

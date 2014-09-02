@@ -13,12 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: install_git_source.yml
-- include: pip_install.yml
-
 # TODO(kevin) This should go away sooner than later
-- name: Laydown the example files
-  shell: >
-    chdir="/opt/{{ service_name }}_{{ git_install_branch | replace('/', '_') }}/{{ git_etc_example }}"
-    for i in *; do if [ ! -f "/etc/{{ service_name }}/$i" ]; then cp -R $i /etc/{{ service_name }}/; fi; done;
-  when: git_etc_example is defined
+# - name: Laydown the example files
+#   shell: >
+#     chdir="{{ git_dest }}/{{ git_etc_example }}"
+#     for i in *; do if [ ! -f "/etc/{{ service_name }}/$i" ]; then cp -R $i /etc/{{ service_name }}/; fi; done;
+#   when: git_etc_example is defined

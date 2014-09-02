@@ -17,3 +17,5 @@
   user: root
   roles:
     - galera_remove
+  vars_files:
+    - vars/config_vars/container_config_galera.yml

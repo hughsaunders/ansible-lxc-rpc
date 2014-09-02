@@ -16,13 +16,16 @@
 - hosts: nova_spice_console
   user: root
   roles:
-    - common
-    - common_sudoers
-    - container_common
-    - openstack_common
-    - openstack_openrc
-    - nova_common
+    - package_system_install
     - galera_client_cnf
+  vars_files:
+    - inventory/group_vars/nova_all.yml
+    - vars/repo_packages/nova_spice_console.yml
+
+- hosts: nova_spice_console
+  user: root
+  roles:
+    - nova_common
     - init_script
   vars_files:
     - inventory/group_vars/nova_all.yml
@@ -34,15 +37,11 @@
 - hosts: nova_spice_console
   user: root
   roles:
-    - common
-    - common_sudoers
-    - container_common
-    - openstack_common
-    - openstack_openrc
     - nova_common
-    - galera_client_cnf
     - init_script
   vars_files:
+    - inventory/group_vars/nova_all.yml
     - vars/openstack_service_vars/nova_console_auth.yml
+    - vars/openstack_service_vars/nova_spice_console_endpoint.yml
   handlers:
     - include: handlers/services.yml

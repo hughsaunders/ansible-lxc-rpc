@@ -1,0 +1,35 @@
+---
+# Copyright 2014, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- include: drop_pip_config.yml
+
+- include: get_pip.yml
+
+- include: pip_install.yml
+  when: pip_common_packages is defined
+  vars:
+    defined_pip_packages: "{{ pip_common_packages }}"
+
+- include: pip_install.yml
+  when: service_pip_dependencies is defined
+  vars:
+    defined_pip_packages: "{{ service_pip_dependencies }}"
+
+- include: source_install.yml
+
+- include: pip_install_requirements.yml
+  when: pip_requirements_file is defined
+  vars:
+    defined_pip_requirements_file: "{{ pip_requirements_file }}"

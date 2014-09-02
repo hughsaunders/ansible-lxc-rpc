@@ -63,22 +63,6 @@ heat_watch_server_url: "http://{{ external_vip_address }}:8003"
 heat_waitcondition_server_url: "http://{{ internal_vip_address }}:8000/v1/waitcondition"
 heat_metadata_server_url: "http://{{ internal_vip_address }}:8000"
 
-## Git Source
-git_repo: https://git.openstack.org/openstack/heat
-git_fallback_repo: https://github.com/openstack/heat
-git_etc_example: etc/heat
-git_install_branch: stable/icehouse
-
-service_pip_dependencies:
-  - MySQL-python
-  - python-memcached
-  - pycrypto
-  - python-heatclient
-  - python-keystoneclient
-  - python-troveclient
-  - python-ceilometerclient
-  - keystonemiddleware
-
 container_directories:
   - /etc/heat
   - /etc/heat/environment.d
@@ -86,7 +70,3 @@ container_directories:
   - /var/cache/heat
   - /var/lib/heat
   - /var/log/heat
-
-container_packages:
-  - rsync
-  - libxslt1.1 

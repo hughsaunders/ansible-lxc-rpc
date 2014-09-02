@@ -17,6 +17,3 @@
 # These don't have to be explicitly imported by vars_files: they are autopopulated.
 
 program_name: nova-spicehtml5proxy
-
-container_packages:
-  - spice-html5

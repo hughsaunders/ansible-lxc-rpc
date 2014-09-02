@@ -13,12 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Stop rsyslog
+  service: 
+    name: "rsyslog"
+    state: "stopped"
+    pattern: "rsyslog"
+
 - name: Rsyslog Setup
-  template: >
-    src={{ item }}
-    dest=/etc/rsyslog.d/{{ item }}
-    owner=root
-    group=root
-  register: results
+  template:
+    src: "{{ item }}"
+    dest: "/etc/rsyslog.d/{{ item }}"
+    owner: "root"
+    group: "root"
   with_items:
     - 50-default.conf
+
+- name: Ensure ownership on /var/spool/rsyslog
+  file:
+    path: "/var/spool/rsyslog"
+    owner: "syslog"
+    group: "syslog"
+    state: "directory"
+
+- name: Start rsyslog
+  service:
+    name: "rsyslog"
+    state: "restarted"
+    pattern: "rsyslog"

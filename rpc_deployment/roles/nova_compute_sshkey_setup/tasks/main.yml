@@ -13,49 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create the keys directory for the nova user
-  file: >
-    state=directory
-    path=/var/lib/nova/.ssh
-    group=nova
-    owner=nova
-    mode=0700
-
-- name: Set nova users shell to /bin/bash and generate ssh_key
-  user: >
-    name=nova
-    shell=/bin/bash
-
-- name: Copy private key up to nova nodes
-  copy: >
-    src="~/.ssh/nova"
-    dest=/var/lib/nova/.ssh/id_rsa
-    owner=nova
-    group=nova
-    mode=0600
-
-- name: Copy public key up to nova nodes
-  copy: >
-    src="~/.ssh/nova.pub"
-    dest=/var/lib/nova/.ssh/id_rsa.pub
-    owner=nova
-    group=nova
-    mode=0644
-
-- name: Add key to authorized_keys file
-  authorized_key:
-    user=nova
-    path=/var/lib/nova/.ssh/authorized_keys
-    manage_dir=no
-    key="{{ lookup('file', '/var/lib/nova/.ssh/id_rsa.pub') }}"
-
 - name: Prevent known_hosts from causing an issue
-  copy: >
-    src=ssh_config
-    dest="/var/lib/nova/.ssh/config"
-    owner=nova
-    group=nova
-    mode=0644
+  copy:
+    src: "ssh_config"
+    dest: "/var/lib/nova/.ssh/config"
+    owner: "nova"
+    group: "nova"
+    mode: "0644"
 
+- name: Sync authorized_keys file
+  synchronize:
+    src: /tmp/authorized_keys
+    dest: /var/lib/nova/.ssh/authorized_keys
 
-
+- name: Set authorized_keys permissions
+  file:
+    path: "/var/lib/nova/.ssh/authorized_keys"
+    owner: "nova"
+    group: "nova"
+    mode: "0600"

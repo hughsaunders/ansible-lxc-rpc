@@ -14,9 +14,6 @@
 # limitations under the License.
 
 - include: kernel_check.yml
-- include: repos.yml
-- include: utils.yml
-- include: get_pip.yml
-- include: install_pip_deps.yml
 - include: rpc_release.yml
 - include: lvm_conf.yml
+- include: mariadb_priority.yml

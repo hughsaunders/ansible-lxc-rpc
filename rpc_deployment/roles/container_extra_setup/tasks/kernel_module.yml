@@ -17,7 +17,7 @@
   modprobe:
     name: "{{ item }}"
   with_items: kernel_modules
-  when: kernel_modules is defined
+  when: physical_host is defined and kernel_modules is defined
   delegate_to: "{{ physical_host }}"
 
 - name: "Ensure kernel module(s) loaded at boot"
@@ -25,5 +25,5 @@
     dest: /etc/modules
     line: "{{ item }}"
   with_items: kernel_modules
-  when: kernel_modules is defined
+  when: physical_host is defined and kernel_modules is defined
   delegate_to: "{{ physical_host }}"

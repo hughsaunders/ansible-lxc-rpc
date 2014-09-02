@@ -17,6 +17,8 @@
 - name: Get kernel release
   command: uname -r
   register: kernel_release
+  changed_when: false
+  failed_when: kernel_release.rc != 0
 
 - name: Check kernel version
   fail:

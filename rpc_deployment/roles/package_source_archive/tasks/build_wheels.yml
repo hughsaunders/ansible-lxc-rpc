@@ -1,0 +1,133 @@
+---
+# Copyright 2014, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Get package from git
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ build_git_dir }}"
+    version: "{{ git_install_branch }}"
+  register: git_clone
+  when: git_repo is defined
+  ignore_errors: yes
+  until: git_clone|success
+  retries: 5
+
+- include: pip_build_wheels.yml
+  vars:
+    wheel_requirements: "{{ build_git_dir }}/requirements.txt"
+
+- include: pip_build_wheels.yml
+  vars:
+    wheel_requirements: "{{ build_git_dir }}/{{ pip_requirements_file|basename }}"
+  when: pip_requirements_file is defined
+
+- name: Create base wheel build file
+  lineinfile:
+    dest: "{{ temp_dir }}/wheels.service_pip_dependencies.txt"
+    line: "{{ item }}"
+    state: present
+    create: yes
+  register: service_deps
+  with_items:
+    - "{{ service_pip_dependencies }}"
+  when: service_pip_dependencies is defined
+
+- include: pip_build_wheels.yml
+  vars:
+    wheel_requirements: "{{ temp_dir }}/wheels.service_pip_dependencies.txt"
+  when: service_pip_dependencies is defined
+
+- name: Add git repo plugins
+  lineinfile:
+    dest: "{{ temp_dir }}/wheels.git_repo_plugins.txt"
+    line: "{{ build_git_dir }}/{{ item.path }}/{{ item.package }}"
+    state: present
+    create: yes
+  with_items:
+    - "{{ git_repo_plugins }}"
+  when: git_repo_plugins is defined
+
+- include: pip_build_wheels.yml
+  vars:
+    wheel_requirements: "{{ temp_dir }}/wheels.git_repo_plugins.txt"
+  when: git_repo_plugins is defined
+
+- name: Add common pip packages
+  lineinfile:
+    dest: "{{ temp_dir }}/wheels.pip_common_packages.txt"
+    line: "{{ item }}"
+    state: present
+    create: yes
+  with_items:
+    - "{{ pip_common_packages }}"
+  when: pip_common_packages is defined
+
+- include: pip_build_wheels.yml
+  vars:
+    wheel_requirements: "{{ temp_dir }}/wheels.pip_common_packages.txt"
+  when: pip_common_packages is defined
+
+- name: Check for [ setup.py ] file
+  command: ls "{{ build_git_dir }}/setup.py"
+  register: check_setup
+  failed_when: false
+  changed_when: check_setup.rc != 0
+
+- name: Add OS service path
+  lineinfile:
+    dest: "{{ temp_dir }}/wheels.build_git_dir.txt"
+    line: "{{ item }}"
+    state: present
+    create: yes
+  with_items:
+    - "{{ build_git_dir }}"
+  when: git_repo is defined and check_setup.rc == 0
+
+- include: pip_build_wheels.yml
+  vars:
+    wheel_requirements: "{{ temp_dir }}/wheels.build_git_dir.txt"
+  when: git_repo is defined
+
+- name: Set path fact (service)
+  set_fact:
+    wheel_path: "{{ repo_package_name }}_{{ git_install_branch | replace('/', '_') }}"
+  register: service_path
+  when: repo_package_name is defined and git_install_branch is defined
+
+- name: Set path fact (release)
+  set_fact:
+    wheel_path: "{{ release_version }}"
+  when: service_path|skipped
+
+- name: Check for [ *.whl ] file(s)
+  shell: ls {{ temp_dir }}/wheels/*.whl
+  register: built_whls
+  failed_when: false
+  changed_when: built_whls.rc != 0
+
+- name: Turbolift wheel archive to swift repo
+  shell: |
+    turbolift --os-user {{ swift_user }} \
+              --os-password {{ swift_user_password }} \
+              --os-tenant {{ swift_user_tenant }} \
+              --os-auth-url "{{ swift_authurl }}" \
+              --os-region {{ swift_region }} \
+              --quiet \
+              upload \
+              --container "{{ swift_container }}" \
+              --source "{{ temp_dir }}/wheels" \
+              --dir "python_packages/{{ wheel_path }}" \
+              --sync
+  when: built_whls.rc == 0

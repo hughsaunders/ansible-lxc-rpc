@@ -63,7 +63,6 @@ service_names:
 nova_metadata_ip: "{{ internal_vip_address }}"
 nova_metadata_proxy_shared_secret: "{{ nova_metadata_proxy_secret }}"
 
-
 ## Nova global config
 nova_cpu_mode: host-model
 nova_linuxnet_interface_driver: nova.network.linux_net.NeutronLinuxBridgeInterfaceDriver
@@ -71,20 +70,6 @@ nova_libvirt_vif_driver: nova.virt.libvirt.vif.NeutronLinuxBridgeVIFDriver
 nova_firewall_driver: nova.virt.firewall.NoopFirewallDriver
 nova_compute_driver: libvirt.LibvirtDriver
 nova_max_age: 0
-
-## Git Source
-git_repo: https://git.openstack.org/openstack/nova
-git_fallback_repo: https://github.com/openstack/nova
-git_etc_example: etc/nova/
-git_install_branch: stable/icehouse
-
-service_pip_dependencies:
-  - MySQL-python
-  - python-memcached
-  - pycrypto
-  - python-keystoneclient
-  - python-novaclient
-  - keystonemiddleware
 
 container_directories:
   - /var/log/nova
@@ -95,9 +80,3 @@ container_directories:
   - /var/cache/nova
   - /var/lock/nova
   - /var/run/nova
-
-container_packages:
-  - libpq-dev
-  - open-iscsi
-  - vlan
-  - kpartx

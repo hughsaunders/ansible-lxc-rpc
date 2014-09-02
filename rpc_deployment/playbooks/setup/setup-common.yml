@@ -18,6 +18,10 @@
   roles:
     - safe_upgrade
     - common
+    - package_system_install
+    - package_source_install
     - host_common
     - lxc_common
-
+  vars_files:
+    - vars/repo_packages/hosts.yml
+    - vars/repo_packages/all_common.yml

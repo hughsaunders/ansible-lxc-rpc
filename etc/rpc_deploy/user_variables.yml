@@ -111,7 +111,6 @@ maas_monitoring_zones:
   - mzord
   - mzlon
   - mzhkg
-maas_repo_version: v9.0.0
 
 
 ## Neutron Options
@@ -120,7 +119,7 @@ neutron_service_password:
 
 
 ## Nova Options
-nova_virt_type: qemu
+nova_virt_type: kvm
 nova_container_mysql_password:
 nova_metadata_proxy_secret:
 nova_ec2_service_password:
@@ -136,3 +135,11 @@ rpc_support_holland_password:
 ## Kibana Options
 kibana_password:
 
+
+## python repo archive
+python_repo_swift_user: "xxx"
+python_repo_swift_user_password: "xxx"
+python_repo_swift_user_tenant: "xxx"
+python_repo_swift_authurl: "xxx"
+python_repo_swift_region: "xxx"
+python_repo_release_version: "xxx"

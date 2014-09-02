@@ -19,7 +19,8 @@
   shell: >
     (which vgs > /dev/null && vgs | grep -o "lxc") || false
   register: vg_result
-  ignore_errors: True
+  failed_when: false
+  changed_when: vg_result.rc != 0
 
 - name: Create Container Local
   lxc: >

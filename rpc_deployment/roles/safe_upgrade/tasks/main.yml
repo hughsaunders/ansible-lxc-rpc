@@ -14,14 +14,10 @@
 # limitations under the License.
 
 - name: Update cache
-  apt: >
-    update_cache=yes
-    cache_valid_time=10800
-
-- name: Ensure Aptitude
-  apt: >
-    pkg=aptitude
-    state=present
+  apt:
+    update_cache: "yes"
+    cache_valid_time: "10800"
 
 - name: Do safe upgrade
-  apt: upgrade=safe
+  apt: 
+    upgrade: "safe"

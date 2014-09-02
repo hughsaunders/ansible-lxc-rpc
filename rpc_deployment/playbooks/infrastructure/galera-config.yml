@@ -20,8 +20,11 @@
     - common
     - common_sudoers
     - container_common
-    - galera_common
+    - package_system_install
+    - package_source_install
     - galera_client_cnf
     - galera_config
   vars_files:
     - vars/config_vars/container_config_galera.yml
+    - vars/repo_packages/all_common.yml
+    - vars/repo_packages/galera.yml

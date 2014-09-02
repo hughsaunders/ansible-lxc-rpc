@@ -16,6 +16,7 @@
 - name: Check wsrep cluster size
   shell: >
     mysql -e 'show status like "wsrep_cluster_size%"\G'|awk '/Value/{print $2}'
+  changed_when: false
   register: wsrep_cluster_size
 
 - name: Stop mariadb
@@ -29,7 +30,15 @@
 - name: Check if mysql is running
   shell: >
     pgrep -fl mysqld
+  changed_when: false
   register: mysql_running
+
+- name: Remove ib_logfile(s) if found
+  shell: rm /var/lib/mysql/ib_logfile*
+  register: rm_iblogfile
+  failed_when: false
+  changed_when: rm_iblogfile.rc == 0
+  when: wsrep_cluster_size.stdout|search("1") or mysqlstopped|changed or not mysql_running.stdout|search("mysql")
 
 - name: bootstrap cluster (initialise mysql with --wsrep-new-cluster)
   service:

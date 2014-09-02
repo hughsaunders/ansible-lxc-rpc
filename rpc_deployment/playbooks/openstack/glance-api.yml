@@ -13,25 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- hosts: glance_all
-  user: root
-  roles:
-    - common
-    - common_sudoers
-    - container_common
-    - openstack_common
-    - openstack_openrc
-    - galera_client_cnf
-  vars_files:
-    - vars/openstack_service_vars/glance_api.yml
-
-- hosts: glance_api[0]
-  user: root
-  roles:
-    - keystone_add_service
-  vars_files:
-    - vars/openstack_service_vars/glance_api_endpoint.yml
-
 - hosts: glance_api[0]
   user: root
   roles:
@@ -41,11 +22,10 @@
     - init_script
     - glance_cache_crons
   vars_files:
-    - vars/config_vars/glance_config.yml
     - vars/openstack_service_vars/glance_api.yml
+    - vars/repo_packages/glance.yml
   handlers:
     - include: handlers/services.yml
-
 
 - hosts: glance_api!:glance_api[0]
   user: root
@@ -54,7 +34,7 @@
     - init_script
     - glance_cache_crons
   vars_files:
-    - vars/config_vars/glance_config.yml
     - vars/openstack_service_vars/glance_api.yml
+    - vars/repo_packages/glance.yml
   handlers:
     - include: handlers/services.yml

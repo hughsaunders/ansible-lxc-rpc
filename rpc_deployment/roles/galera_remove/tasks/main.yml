@@ -22,10 +22,11 @@
   apt:
     pkg: "{{ item }}"
     state: absent
-    purge: no
-    update_cache: no
+    purge: yes
+    update_cache: yes
     cache_valid_time: 600
-  with_items: galera_packages
+  ignore_errors: yes
+  with_items: container_packages
   ignore_errors: yes
 
 - name: Remove db related paths
