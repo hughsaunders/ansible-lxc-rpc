@@ -33,6 +33,7 @@ apt_container_keys:
 # Hyphens and periods replaced with underlines. This will ensure that when ansible 
 # runs into the ``apt_common_repos`` option is set correctly.
 apt_common_repos:
+  - { repo: "deb [arch=amd64] {{ rpc_repo_url }} rpc-LA main", state: "present", name: "rpc_slushee_rackspace_com" }
   - { repo: "deb [arch=amd64] {{ rpc_repo_url }} LA main", state: "present", name: "rpc_slushee_rackspace_com" }
   - { repo: "deb [arch=amd64] {{ rpc_repo_url }} universe-LA universe", state: "present", name: "rpc_slushee_rackspace_com" }
 
