@@ -24,7 +24,7 @@
     state: stopped
     pattern: mysqld
   register: mysqlstopped
-  when: wsrep_cluster_size.stdout | search("1") or wsrep_cluster_size.stderr | search("ERROR")
+  when: wsrep_cluster_size.stdout | search("[10]") or wsrep_cluster_size.stderr | search("ERROR")
 
 - name: Check if mysql is running
   shell: >
@@ -36,4 +36,4 @@
     name: mysql
     state: restarted
     args: --wsrep-new-cluster
-  when: wsrep_cluster_size.stdout|search("1") or mysqlstopped|changed or not mysql_running.stdout|search("mysql")
+  when: wsrep_cluster_size.stdout|search("[10]") or mysqlstopped|changed or not mysql_running.stdout|search("mysql")
