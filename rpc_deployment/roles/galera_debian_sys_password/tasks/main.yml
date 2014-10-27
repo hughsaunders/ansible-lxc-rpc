@@ -13,14 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- hosts: galera[0]
-  user: root
-  roles:
-    - galera_setup
+# The idea of this role is that the debian-sys-maint password should not be
+# changed until the password has been set in the database. If the dsm password
+# is changed early, then restarts required to setup replicaiton may fail.
 
-- hosts: galera
-  user: root
-  roles:
-    - galera_debian_sys_password
-    - galera_post_config
+- name: "Check if configured debian-sys-maint password works"
+  shell: "mysql -h 127.0.0.1 -u debian-sys-maint -p{{ debian_sys_maint_password }} -e ';'"
+  register: dsm_password
+  ignore_errors: true
 
+- name: "Template etc/mysql/debian.cnf"
+  template:
+    src: debian.cnf
+    dest: /etc/mysql/debian.cnf
+  when: dsm_password|success

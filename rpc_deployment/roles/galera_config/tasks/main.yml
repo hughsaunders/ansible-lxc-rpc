@@ -31,4 +31,3 @@
   with_items:
     - { src: my.cnf, dest: /etc/mysql/my.cnf }
     - { src: cluster.cnf, dest: /etc/mysql/conf.d/cluster.cnf }
-    - { src: debian.cnf, dest: /etc/mysql/debian.cnf }
