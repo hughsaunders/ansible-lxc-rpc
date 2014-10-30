@@ -45,7 +45,11 @@ rpc_release: master
 
 ## GPG Keys
 gpg_keys:
-  - { key_name: 'mariadb', keyserver: 'hkp://keyserver.ubuntu.com:80', hash_id: '0xcbcb082a1bb943db' }
+  - { key_name: 'mariadb', hash_id: '0xcbcb082a1bb943db' }
+
+gpg_keyservers:
+  - 'hkp://keyserver.ubuntu.com:80'
+  - 'hkp://pgp.mit.edu:80'
 
 
 ## Repositories

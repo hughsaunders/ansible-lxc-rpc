@@ -15,11 +15,17 @@
 
 - name: add apt-keys
   apt_key:
-    id: "{{ item.hash_id }}"
-    keyserver: "{{ item.keyserver }}"
+    id: "{{ item[0].hash_id }}"
+    keyserver: "{{ item[1] }}"
     state: "present"
-  with_items: gpg_keys
+  with_nested:
+    - gpg_keys
+    - gpg_keyservers
   when: "ansible_distribution_version in ['12.04', '13.04', '13.10', '14.04']"
+  ignore_errors: true
+  register: add_keys
+  until: add_keys|success
+  retries: 3
 
 - name: Add Common repos
   apt_repository:
