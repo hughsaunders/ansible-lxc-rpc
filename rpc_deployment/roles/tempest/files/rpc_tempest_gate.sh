@@ -19,12 +19,15 @@
 set -e
 set -x
 
-API_TESTS="identity"
+API_TESTS=(
+  identity
+  volume
+)
 
 pushd /opt/tempest_*
 source /root/openrc
 
-for project in $API_TESTS
+for project in ${API_TESTS[*]}
 do
   echo "Running API tests for $project"
   nosetests -v tempest/api/$project
