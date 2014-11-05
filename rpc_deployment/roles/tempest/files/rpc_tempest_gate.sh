@@ -22,6 +22,7 @@ set -x
 API_TESTS=(
   identity
   volume
+  image
 )
 
 pushd /opt/tempest_*
