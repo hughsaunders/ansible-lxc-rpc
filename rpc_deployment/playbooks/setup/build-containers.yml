@@ -13,12 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- hosts: "{{ host_group|default('hosts') }}"
+- hosts: "{{ host_group|default('all_containers') }}"
+  gather_facts: False
   user: root
   roles:
     - container_create
-  vars:
-    default_container_groups: "{{ hostvars[inventory_hostname]['container_types'] }}"
-    container_groups: "{{ groups[container_group|default(default_container_groups)] | default('') }}"
 
 - include: containers-setup.yml

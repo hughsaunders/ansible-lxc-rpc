@@ -20,39 +20,41 @@
     (which vgs > /dev/null && vgs | grep -o "lxc") || false
   register: vg_result
   ignore_errors: True
+  delegate_to: "{{ physical_host }}"
 
 - name: Create Container Local
   lxc: >
-    name={{ hostvars[item]['container_name'] }}
+    name={{ container_name }}
     template={{ container_template }}
-    config={{ hostvars[item]['container_config'] }}
+    config={{ container_config }}
     command=create
     state=running
     template_options="
       --release {{ container_release }}
     "
   when: vg_result.rc == 1
-  with_items: container_groups
+  delegate_to: "{{ physical_host }}"
 
 - name: Check Container Bridge exists
   file: >
     state=file
     path="/sys/class/net/{{ management_bridge }}/bridge/bridge_id"
+  delegate_to: "{{ physical_host }}"
 
 - name: Create Container LVM
   lxc: >
-    name={{ hostvars[item]['container_name'] }}
+    name={{ container_name }}
     template={{ container_template }}
-    config={{ hostvars[item]['container_config'] }}
+    config={{ container_config }}
     command=create
     state=running
     bdev=lvm
-    lvname={{ hostvars[item]['container_name'] }}
+    lvname={{ container_name }}
     vgname=lxc
-    fstype={{ hostvars[item]['container_lvm_fstype'] }}
-    fssize={{ hostvars[item]['container_lvm_fssize'] }}
+    fstype={{ container_lvm_fstype }}
+    fssize={{ container_lvm_fssize }}
     template_options="
       --release {{ container_release }}
     "
   when: vg_result.rc == 0
-  with_items: container_groups
+  delegate_to: "{{ physical_host }}"
